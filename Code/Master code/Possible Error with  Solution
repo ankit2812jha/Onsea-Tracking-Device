@@ -1,0 +1,32 @@
+1. ERROR:-
+
+     E (169804) task_wdt: Task watchdog got triggered. The following tasks did not reset the watchdog in time:
+     E (169804) task_wdt:  - IDLE0 (CPU 0)
+     E (169804) task_wdt: Tasks currently running:
+     E (169804) task_wdt: CPU 0: wifi
+     E (169804) task_wdt: CPU 1: IDLE1
+     E (169804) task_wdt: Aborting.
+     abort() was called at PC 0x400d8ac7 on core 0
+
+     Backtrace: 0x4008c714:0x3ffbe170 0x4008c945:0x3ffbe190 0x400d8ac7:0x3ffbe1b0 0x40084a51:0x3ffbe1d0 0x40082338:0x3ffb5ca0 0x400823df:0x3ffb5cc0 0x4008a40f:0x3ffb5ce0 0x400d5921:0x3ffb5d00 0x400d150d:0x3ffb5d20 0x400d196d:0x3ffb5d60 0x400d19b9:0x3ffb5db0 0x400d1c69:0x3ffb5de0 0x4013e597:0x3ffb5e10 0x400d4a85:0x3ffb5e30 0x400d4afd:0x3ffb5e50 0x400d3541:0x3ffb5e70 0x400d3703:0x3ffb5f80 0x4012a245:0x3ffb5fb0 0x400fd4bf:0x3ffb5fd0 0x400fd3a0:0x3ffb6000 0x400e8879:0x3ffb6030 0x400e8b73:0x3ffb6130 0x40138975:0x3ffb6150 0x4008f896:0x3ffb61a0 0x40088e5d:0x3ffb61e0
+
+     Rebooting...
+
+   SOLUTION:- 
+        
+        Add below 2 lines header part of the code:- 
+
+              #include "soc/timer_group_struct.h"
+              #include "soc/timer_group_reg.h"
+        
+        Add telow 6 line to your blank loop function:-
+              
+                TIMERG0.wdt_wprotect=TIMG_WDT_WKEY_VALUE;   // write enable dog 0
+                TIMERG0.wdt_feed=1;                         // feed dog 0
+                TIMERG0.wdt_wprotect=0;                     // write protect dog 0
+              
+                TIMERG1.wdt_wprotect=TIMG_WDT_WKEY_VALUE;   // write enable dog 1
+                TIMERG1.wdt_feed=1;                         // feed dog 1
+                TIMERG1.wdt_wprotect=0;                     // write protect dog 1
+                
+         
